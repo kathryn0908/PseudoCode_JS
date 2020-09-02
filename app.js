@@ -5,9 +5,9 @@ const returnBookButton = document.querySelector('#return-button');
 const checkedOutBook = document.querySelector('#checkedout-book')
 
 
-//**overDueBook should run in the login function**//
+//**overdueBook should run in the login function**//
 
-function overDueBook(checkoutDate){
+function overdueBook(checkoutDate){
     //this is ideally how I would set up the problem, not 100% if this code would actually work because I am not using a dataset
     const datesArray = Array.from(checkOutDate);
 
@@ -21,6 +21,29 @@ function overDueBook(checkoutDate){
         if (Difference_In_Days >= 14){
             alert("One of your books is overdue!");
         }
+    })
+}
+
+//to send out an email other than an alert would probably need to create a Windows Service Application that keeps track and sends out a pre-filled email with User and Book info string interpolated into the format.
+
+//**BookTracking should run in the login function**//
+function BookTracking(checkoutDate){
+    //this is ideally how I would set up the problem, not 100% if this code would actually work because I am not using a dataset
+    const datesArray = Array.from(checkOutDate);
+
+    datesArray.forEach(date => {
+        const today = new Date();
+        const currentDate = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+        const checkOutD = checkOutDate.innerText
+        const Difference_In_Time = currentDate.getTime() - checkOutD.getTime();
+        const Difference_In_Days = Difference_In_Time / (1000 * 3600 * 24)
+
+       const daysLeftTilOverdue = document.createElement('ul')
+       daysLeftTilOverdue.innerText = Difference_In_Days
+
+       const daysLeftList = document.querySelector('.days-left-list')
+
+       daysLeftList.appendChild(daysLeftTilOverdue)
     })
 }
 
@@ -39,7 +62,7 @@ function checkOutBook(){
    const addedBook = document.createElement('li')
    addedBook.textContent = checkedOutBook
 
-   const bookList = document.querySelector('ol');
+   const bookList = document.querySelector('.checkedout-books');
    bookList.appendChild(addedBook);
 
    fetch(checkedOutBooksURL, {
@@ -53,7 +76,7 @@ returnBookButton.addEventListener('click', returnBook())
 function returnBook(){
     checkedOutBook.remove();
 
-    fetch(`${checkedOutBooksURL}/${Book.Id}`, {
+    fetch(`${checkedOutBooksURL}/${CheckedOutBook.Id}`, {
         method: 'DELETE',
         headers: {'content-type': 'application/json'}
     })
